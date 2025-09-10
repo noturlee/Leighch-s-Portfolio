@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>noturlee · Projects</title>
+  <meta name="description" content="Auto‑listed GitHub repositories for @noturlee" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="style.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+<nav class="site-nav" data-open="false">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="logo-dot" aria-hidden="true"></span> noturlee
+    </a>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="links" id="navLinks">
+      <li><a href="home.html" data-route="home">Home</a></li>
+      <li><a href="about.html" data-route="about">About</a></li>
+      <li><a href="index.html" data-route="projects">Projects</a></li>
+      <li><a href="articles.html" data-route="articles">Articles</a></li>
+    </ul>
+
+    <button id="themeBtnTop" class="icon-btn" type="button" aria-label="Toggle theme">
+      <!-- simple sun/moon mark -->
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+        <path d="M12 4a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V5a1 1 0 0 1 1-1zm0 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm8-5h1a1 1 0 1 1 0 2h-1a1 1 0 1 1 0-2zM3 11H2a1 1 0 1 0 0 2h1a1 1 0 0 0 0-2zm14.95 6.364.707.707a1 1 0 1 1-1.414 1.414l-.707-.707a1 1 0 0 1 1.414-1.414zM6.05 5.636l-.707-.707A1 1 0 1 1 6.757 3.515l.707.707A1 1 0 1 1 6.05 5.636zm12.314-1.414.707-.707a1 1 0 1 1 1.414 1.414l-.707.707A1 1 0 0 1 18.364 4.222zM5.636 18.364l-.707.707a1 1 0 1 0 1.414 1.414l.707-.707A1 1 0 0 0 5.636 18.364z"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+
+  <header>
+    <img id="avatar" alt="Avatar" src="" loading="lazy" />
+    <div class="hgroup">
+      <div class="name"><a id="profileLink" href="#" target="_blank">@noturlee</a></div>
+      <div class="bio" id="bio"></div>
+      <div class="stats" id="stats"></div>
+    </div>
+  </header>
+
+  <section class="controls">
+    <input id="q" class="input" placeholder="Search name or description…" />
+    <select id="lang"><option value="">All languages</option></select>
+    <select id="sort">
+      <option value="updated">Sort: Recently updated</option>
+      <option value="stars">Sort: Most stars</option>
+      <option value="name">Sort: Name (A→Z)</option>
+    </select>
+    <label class="checkbox"><input type="checkbox" id="includeForks" /> Include forks</label>
+  </section>
+
+  <div class="count"><span id="count">Loading reposzxeitories…</span></div>
+
+  <main class="grid" id="grid" aria-live="polite" aria-busy="true"></main>
+
+  <footer>
+    <p class="note">Powered by the <a href="https://docs.github.com/en/rest" target="_blank" rel="noopener">GitHub REST API</a>. Public repositories load without auth. To include private repos, add a personal access token (classic, repo scope) — see code comments.</p>
+  </footer>
+
+<script>
+(function(){
+  const username = "noturlee"; // ← change if needed
+  const API_BASE = "https://api.github.com";
+
+  // Optional: paste a token to include private repos & raise rate limits
+  // const TOKEN = "ghp_your_token_here"; // ← keep this secret; never commit
+  const headers = {
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+    // ...(TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {})
+  };
+
+  const grid = document.getElementById('grid');
+  const bio = document.getElementById('bio');
+  const stats = document.getElementById('stats');
+  const avatar = document.getElementById('avatar');
+  const profileLink = document.getElementById('profileLink');
+  const countEl = document.getElementById('count');
+
+  const q = document.getElementById('q');
+  const langSel = document.getElementById('lang');
+  const sortSel = document.getElementById('sort');
+  const includeForks = document.getElementById('includeForks');
+  const themeBtn = document.getElementById('themeBtn');
+
+  // Simple debounce
+  const debounce = (fn, ms=200)=>{let t;return (...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}};
+
+  const timeAgo = (iso)=>{
+    const d = new Date(iso); const diff = (Date.now()-d.getTime())/1000;
+    if(diff<60) return `${Math.floor(diff)}s ago`;
+    if(diff<3600) return `${Math.floor(diff/60)}m ago`;
+    if(diff<86400) return `${Math.floor(diff/3600)}h ago`;
+    if(diff<2592000) return `${Math.floor(diff/86400)}d ago`;
+    const y = d.getFullYear(); const m = (d.getMonth()+1).toString().padStart(2,'0'); const day = d.getDate().toString().padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  };
+
+  const icon = {
+    star:`<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 17.27 6.18 3.73-1.64-7.03L21 9.24l-7.19-.61L12 2 10.19 8.63 3 9.24l4.46 4.73L5.82 21z"/></svg>`,
+    fork:`<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm10 0a3 3 0 1 1 0 6 3 3 0 0 1 0-6zM7 15a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm2-6.17A5.002 5.002 0 0 0 14 14h1v2h-2a7.002 7.002 0 0 1-6-6.93V8h2v.83zM15 8V6h2v2h-2z"/></svg>`,
+    book:`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 2h11a3 3 0 0 1 3 3v14a1 1 0 0 1-1.447.895L16 18.118l-2.553 1.777A1 1 0 0 1 12 18.999V6a2 2 0 0 0-2-2H6z"/></svg>`
+  };
+
+  let repos = [];
+
+  function skeleton(n=8){
+    grid.innerHTML = Array.from({length:n}).map(()=>`<div class="skeleton"></div>`).join("");
+  }
+
+  async function fetchUser(){
+    const r = await fetch(`${API_BASE}/users/${username}`, {headers});
+    if(!r.ok) throw new Error('Failed to load user');
+    return r.json();
+  }
+
+  async function fetchRepos(){
+    // Pull up to 100 repos; add &type=all to include forks/private with token
+    const params = new URLSearchParams({ per_page: "100", sort: "updated" });
+    const r = await fetch(`${API_BASE}/users/${username}/repos?${params.toString()}`, {headers});
+    if(!r.ok) throw new Error('Failed to load repositories');
+    return r.json();
+  }
+
+  function uniqueLanguages(list){
+    const set = new Set(list.map(r=>r.language).filter(Boolean));
+    return Array.from(set).sort((a,b)=>a.localeCompare(b));
+  }
+
+  function applyFilters(){
+    const term = q.value.trim().toLowerCase();
+    const lang = langSel.value;
+    const showForks = includeForks.checked;
+
+    let out = repos.filter(r => (showForks || !r.fork));
+    if(lang) out = out.filter(r => r.language === lang);
+    if(term){
+      out = out.filter(r => (r.name+" "+(r.description||"")+" "+(r.topics||[]).join(" ")).toLowerCase().includes(term));
+    }
+
+    const key = sortSel.value;
+    out.sort((a,b)=>{
+      if(key==='stars') return (b.stargazers_count||0) - (a.stargazers_count||0);
+      if(key==='name') return a.name.localeCompare(b.name);
+      // default: updated desc
+      return new Date(b.updated_at) - new Date(a.updated_at);
+    });
+
+    render(out);
+  }
+
+  function render(list){
+    countEl.textContent = `${list.length} repos shown`;
+    if(list.length === 0){
+      grid.innerHTML = `<div class=\"card\"><div class=\"desc\">No repositories match your filters.</div></div>`;
+      grid.setAttribute('aria-busy','false');
+      return;
+    }
+
+    grid.innerHTML = list.map(r=>{
+      const topics = (r.topics||[]).slice(0,6).map(t=>`<span class=\"chip\">#${t}</span>`).join('');
+      const lang = r.language ? `<span class=\"chip\" title=\"Primary language\">${r.language}</span>` : '';
+      const license = r.license?.spdx_id && r.license.spdx_id !== 'NOASSERTION' ? `<span class=\"chip\" title=\"License\">${r.license.spdx_id}</span>` : '';
+      return `<article class=\"card\">
+        <h3>${icon.book}<a href=\"${r.html_url}\" target=\"_blank\" rel=\"noopener\">${r.name}</a>${r.fork?`<span class=\"chip\" title=\"Forked repository\">fork</span>`:''}</h3>
+        <div class=\"desc\">${r.description ? escapeHtml(r.description) : '<em>No description</em>'}</div>
+        <div class=\"chips\">${lang}${license}${topics}</div>
+        <div class=\"meta\">
+          <span title=\"Stars\">${icon.star} ${r.stargazers_count||0}</span>
+          <span title=\"Forks\">${icon.fork} ${r.forks_count||0}</span>
+          <span title=\"Last push\">Updated ${timeAgo(r.updated_at)}</span>
+        </div>
+      </article>`
+    }).join('');
+
+    grid.setAttribute('aria-busy','false');
+  }
+
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+  }
+
+  async function init(){
+    try{
+      skeleton();
+      const [u, r] = await Promise.all([fetchUser(), fetchRepos()]);
+      // hydrate header
+      avatar.src = u.avatar_url; avatar.alt = `${u.login} avatar`;
+      profileLink.href = u.html_url; profileLink.textContent = u.name ? `${u.name} (@${u.login})` : `@${u.login}`;
+      bio.textContent = u.bio || '';
+      stats.innerHTML = `<span>${u.public_repos} public repos</span><span>${u.followers} followers</span><span>Following ${u.following}</span>`;
+
+      // normalize repos
+      repos = r.map(x=>({
+        name:x.name, description:x.description, html_url:x.html_url, language:x.language, stargazers_count:x.stargazers_count,
+        forks_count:x.forks_count, updated_at:x.pushed_at || x.updated_at, topics:x.topics || [], license:x.license || null, fork:x.fork
+      }));
+
+      // populate language filter
+      const langs = uniqueLanguages(repos);
+      langSel.innerHTML = '<option value="">All languages</option>' + langs.map(l=>`<option>${l}</option>`).join('');
+
+      applyFilters();
+
+      // events
+      q.addEventListener('input', debounce(applyFilters, 200));
+      langSel.addEventListener('change', applyFilters);
+      sortSel.addEventListener('change', applyFilters);
+      includeForks.addEventListener('change', applyFilters);
+    }catch(err){
+      console.error(err);
+      grid.innerHTML = `<div class=\"card\"><div class=\"desc\"><span class=\"danger\">Error:</span> ${escapeHtml(err.message)}. You may have hit GitHub's rate limit. Try again later or add a token in the code.</div></div>`;
+      countEl.textContent = 'Error loading repositories';
+      grid.setAttribute('aria-busy','false');
+    }
+  }
+
+  init();
+
+// --- Modern nav: mobile toggle + active link + top theme button
+(function () {
+  // 1) Apply saved (or system) theme on load
+  const THEME_KEY = 'gh-theme';
+  const saved = localStorage.getItem(THEME_KEY);
+  const system = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', saved || system);
+
+  // 2) Nav refs
+  const nav   = document.querySelector('.site-nav');
+  const btn   = document.getElementById('navToggle');
+  const links = document.getElementById('navLinks');
+
+  // 3) Mobile open/close
+  btn?.addEventListener('click', () => {
+    const open = nav.getAttribute('data-open') === 'true';
+    nav.setAttribute('data-open', String(!open));
+    btn.setAttribute('aria-expanded', String(!open));
+  });
+  links?.querySelectorAll('a').forEach(a =>
+    a.addEventListener('click', () => nav.setAttribute('data-open','false'))
+  );
+
+  // 4) Mark active link + position segmented pill (if your CSS uses --seg-x/--seg-w)
+  function markActive() {
+    if (!links) return;
+    const here = (location.pathname.split('/').pop() || 'index.html').split('#')[0];
+    const items = Array.from(links.querySelectorAll('a'));
+
+    let target = null;
+    items.forEach(a => {
+      const href = (a.getAttribute('href') || '').split('/').pop().split('#')[0];
+      const isActive = href === here || (here === '' && href === 'index.html');
+      a.classList.toggle('active', isActive);
+      if (isActive && !target) target = a;
+    });
+
+    // If you're on index.html and want "Projects" highlighted too, keep this:
+    if (here === 'index.html') {
+      const proj = links.querySelector('a[data-route="projects"]');
+      if (proj) { proj.classList.add('active'); target = proj; }
+    }
+
+    // Segmented pill position (safe even if you don't use it)
+    if (target) {
+      const pr = links.getBoundingClientRect();
+      const r  = target.getBoundingClientRect();
+      links.style.setProperty('--seg-x', (r.left - pr.left) + 'px');
+      links.style.setProperty('--seg-w',  r.width + 'px');
+    }
+  }
+  window.addEventListener('load', markActive);
+  window.addEventListener('resize', markActive);
+
+  // 5) Scroll shadow (optional)
+  function onScroll(){ window.scrollY > 2 ? nav.classList.add('scrolled') : nav.classList.remove('scrolled'); }
+  onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+  // 6) Theme toggle — SINGLE handler
+  const themeBtnTop = document.getElementById('themeBtnTop');
+  themeBtnTop?.addEventListener('click', () => {
+    const html = document.documentElement;
+    const next = (html.getAttribute('data-theme') === 'light') ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem(THEME_KEY, next);
+  });
+})();
+
+
+
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>noturlee · Research &amp; Articles</title>
+  <meta name="description" content="Research papers and articles by @noturlee, presented in a modern green theme." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0d10; --bg2:#101318; --card:#11161e; --text:#e8eaee; --muted:#a6adbb;
+      --accent:#22c55e; /* green */
+      --accent-2:#10b981; /* teal-green */
+      --chip:#142018; --chipText:#e3f6ea;
+      --ring:#22c55e33; --border:#1f2732;
+      /* Corner glow (match current site: orange). Switch to green by changing these two. */
+      --bg-blob-1:#007006; /* orange dark */
+      --bg-blob-2:#7a3e0a; /* orange mid */
+    }
+    [data-theme="light"]{
+      --bg:#f6fbf8; --bg2:#ffffff; --card:#ffffff; --text:#12151a; --muted:#5b6472;
+      --accent:#16a34a; --accent-2:#059669;
+      --chip:#e8f5ee; --chipText:#143220;
+      --ring:#16a34a26; --border:#e4e8ef;
+      --bg-blob-1:#fff4e6; --bg-blob-2:#ffeddc; /* light orange */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+   body{
+  margin:0;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #139c70, transparent 60%),
+    radial-gradient(1200px 700px at 120% 20%, #a07b1e, transparent 50%),
+    var(--bg);
+  background-repeat: no-repeat;
+  color: var(--text);
+  font: 16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial;
+}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{filter:brightness(1.08)}
+
+    /* Header / nav */
+    header{max-width:1100px;margin:32px auto 16px;display:flex;gap:18px;align-items:center;padding:0 16px}
+header img{width:76px;height:76px;border-radius:20px; border:1px solid var(--border); box-shadow:0 10px 30px #0005}
+.hgroup{display:grid;gap:4px}
+.name{font-weight:800;font-size:30px;letter-spacing:.2px}
+.bio{color:var(--muted);max-width:70ch}
+.stats{display:flex;gap:14px;color:var(--muted);font-size:14px}
+
+    .controls{max-width:1100px;margin:12px auto 8px;display:grid;grid-template-columns:1fr 200px 180px 120px 110px;gap:10px;padding:0 16px}
+.controls input,.controls select,.controls label,.controls button{width:100%}
+.input,select{background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:14px;padding:12px 14px;outline:none;transition:box-shadow .15s,border-color .15s}
+.input:focus,select:focus{border-color:var(--accent); box-shadow:0 0 0 5px var(--ring)}
+.checkbox{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px}
+.btn{background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:white; border:none; border-radius:12px; padding:10px 12px; cursor:pointer; font-weight:600}
+.btn:hover{filter:brightness(1.05)}
+
+    /* Section: LinkedIn */
+    .li-wrap{max-width:1100px;margin:10px auto 0;padding:0 16px}
+    .li-wrap h2{margin:10px 0 8px;font-size:18px;color:var(--muted);font-weight:700}
+    .li-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:40px}
+    .li-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:14px;display:grid;gap:8px}
+    .li-card a{display:flex;align-items:center;gap:10px}
+    .li-card .li-favicon{width:18px;height:18px;border-radius:4px;background:#0a66c2;display:inline-block}
+    .li-card .li-title{font-weight:600}
+    .li-card .li-url{font-size:12px;color:var(--muted);word-break:break-all}
+    .li-iframe{width:100%;height:598px;border:1px solid var(--border);border-radius:16px;background:var(--bg2)}
+
+    footer{max-width:1100px;margin:0 auto 40px;padding:0 16px;color:var(--muted);font-size:13px}
+    /* Enhanced LinkedIn cards (no LinkedIn chrome) */
+    .li-card h3{margin:0;font-size:18px}
+    .li-card .desc{color:var(--muted);font-size:14px}
+    .li-hero{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:linear-gradient(135deg, rgba(34,197,94,.18), rgba(16,185,129,.12)), var(--bg2);border:1px solid var(--border)}
+    .li-btn{display:inline-block;margin-top:6px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border:none;border-radius:10px;padding:8px 12px;font-weight:600}
+  /* ========== Floating Dock Nav ========== */
+    .dock{position:sticky; top:12px; z-index:70; display:flex; justify-content:center; padding:0 16px}
+    .dock-inner{position:relative; display:flex; gap:6px; padding:6px; border-radius:18px; border:1px solid var(--border); background:color-mix(in oklab, var(--bg2), #000 6%); backdrop-filter:saturate(1.2) blur(12px); overflow:auto; -webkit-overflow-scrolling:touch}
+    .dock-inner::-webkit-scrollbar{display:none}
+    .dock .indicator{position:absolute; top:6px; left:6px; height:calc(100% - 12px); width:var(--w,90px); transform:translateX(var(--x,0)); border-radius:12px; background:color-mix(in oklab, var(--card), var(--accent) 14%); border:1px solid color-mix(in oklab, var(--border), var(--accent) 40%); transition:transform .25s cubic-bezier(.22,.8,.27,1), width .25s}
+    .dock-item{position:relative; z-index:1; display:inline-flex; align-items:center; gap:8px; padding:10px 12px; border-radius:12px; color:var(--text); text-decoration:none; white-space:nowrap}
+    .dock-item svg{opacity:.9}
+    .dock-item:hover{color:#fff}
+    .dock-item.active{color:#fff}
+    .dock-icon-only span{display:none}
+    @media (max-width:760px){ .dock-item span{display:none} .dock-icon-only{padding:10px} }
+
+  /* ===== Transparent Segmented-Pill Nav (same as Projects) ===== */
+   
+  .site-nav{
+  position: sticky; top: 0; z-index: 70;
+  background: transparent;                 /* ← fully see-through */
+  border-bottom: 1px solid transparent;    /* no divider at top */
+  backdrop-filter: none;                    /* no glass while at top */
+  -webkit-backdrop-filter: none;
+  transition: background .2s, border-color .2s, box-shadow .2s;
+}
+
+/* soft shadow line (hidden at top) */
+.site-nav::after{
+  content:""; position:absolute; left:0; right:0; bottom:-1px; height:14px;
+  pointer-events:none; background:linear-gradient(to bottom, #0003, transparent);
+  opacity: 0; transition: opacity .2s;
+}
+
+/* when you scroll, add light glass so links stay legible */
+.site-nav.scrolled{
+  background: color-mix(in oklab, var(--bg), #000 12%);  /* subtle tint */
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: saturate(1.2) blur(10px);
+  -webkit-backdrop-filter: saturate(1.2) blur(10px);
+}
+.site-nav.scrolled::after{ opacity: .45; }
+
+
+.site-nav .nav-inner{
+  max-width:1100px; margin:0 auto;
+  display:grid; grid-template-columns:auto 1fr auto auto;
+  align-items:center; gap:12px; padding:10px 16px;
+}
+    .brand{display:inline-flex; align-items:center; gap:10px; font-weight:800; color:var(--text); text-decoration:none}
+    .logo-dot{width:10px;height:10px;border-radius:999px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); box-shadow:0 0 0 4px color-mix(in oklab, var(--accent), transparent 85%);}
+   
+    /* segmented links */
+.links{
+  justify-self:center; list-style:none; margin:0; padding:6px;
+  display:inline-flex; gap:6px; position:relative;
+  border:1px solid var(--border); border-radius:14px;
+  background: color-mix(in oklab, var(--bg2), #fff 2%);
+  overflow:hidden;
+}
+.links::before{ /* animated pill indicator */
+  content:""; position:absolute; top:6px; left:6px;
+  height:calc(100% - 12px); width:var(--seg-w, 0px);
+  transform:translateX(var(--seg-x, 0px));
+  border-radius:10px;
+  background: color-mix(in oklab, var(--card), var(--accent) 16%);
+  border:1px solid color-mix(in oklab, var(--border), var(--accent) 40%);
+  transition: transform .25s cubic-bezier(.22,.8,.27,1), width .25s;
+}
+.links a{
+  position:relative; z-index:1;
+  display:inline-flex; align-items:center; gap:8px;
+  color:var(--text); text-decoration:none;
+  padding:8px 14px; border-radius:10px;
+  transition: color .15s ease, transform .15s ease;
+}
+.links a:hover{ transform:translateY(-1px); }
+.links a.active{ color:#fff; }
+     
+
+.icon-btn{
+  display:inline-grid; place-items:center;
+  width:36px; height:36px; border-radius:12px;
+  background: var(--bg2); color: var(--text);
+  border:1px solid var(--border); cursor:pointer;
+}
+.icon-btn:hover{ background: color-mix(in oklab, var(--card), #fff 4%); }
+
+/* hamburger for mobile */
+.nav-toggle{
+  display:none; width:40px; height:36px; border-radius:12px;
+  border:1px solid var(--border); background:var(--bg2); cursor:pointer;
+  align-items:center; justify-content:center; gap:4px;
+}
+.nav-toggle span{ display:block; width:18px; height:2px; background:var(--text); border-radius:2px; transition: transform .2s, opacity .2s; }
+.site-nav[data-open="true"] .nav-toggle span:nth-child(1){ transform:translateY(6px) rotate(45deg); }
+.site-nav[data-open="true"] .nav-toggle span:nth-child(2){ opacity:0; }
+.site-nav[data-open="true"] .nav-toggle span:nth-child(3){ transform:translateY(-6px) rotate(-45deg); }
+
+
+
+
+    .site-nav[data-open="true"] .nav-toggle span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+    .site-nav[data-open="true"] .nav-toggle span:nth-child(2){opacity:0}
+    .site-nav[data-open="true"] .nav-toggle span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+    @media (max-width:820px){
+      .site-nav .nav-inner{grid-template-columns:auto auto 1fr auto}
+      .nav-toggle{display:flex}
+      .links{position:absolute; left:16px; right:16px; top:58px; display:flex; flex-direction:column; gap:6px; padding:8px; border-radius:16px; box-shadow:0 24px 48px #0005; display:none}
+      .links::before{display:none}
+      .site-nav[data-open="true"] .links{display:flex}
+      .links a{padding:12px}
+    }
+  </style>
+</head>
+<body>
+  <!-- Site Nav (same as Projects page) -->
+  <nav class="site-nav" data-open="false">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><span class="logo-dot" aria-hidden="true"></span> noturlee</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <ul class="links" id="navLinks">
+      <li><a href="home.html" data-route="home">Home</a></li>
+        <li><a href="about.html" data-route="about">About</a></li>
+        <li><a href="index.html#projects" data-route="projects">Projects</a></li>
+        <li><a href="articles.html" data-route="articles">Articles</a></li>
+      </ul>
+      <button id="themeBtnTop" class="icon-btn" type="button" aria-label="Toggle theme">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <header>
+    <img id="avatar" alt="Avatar" src="" loading="lazy" />
+    <div class="hgroup">
+      <div class="name"><a id="profileLink" href="#" target="_blank">@noturlee</a></div>
+      <div class="bio">My research papers and articles.</div>
+    </div>
+    
+  </header>
+
+  <section class="li-wrap">
+    <h2>Research &amp; Articles</h2>
+    <div id="li-grid" class="li-grid"></div>
+  </section>
+
+  <footer>
+    <p>Tip: For full embeds, open your LinkedIn post for the article, click <strong>••• → Embed this post</strong>, and paste the iframe <code>src</code> URL (starts with <code>/embed/feed/update/…</code>). This page will switch from a card to the live embed automatically.</p>
+  </footer>
+
+<script>
+(function(){
+  const username = "noturlee";
+  const API_BASE = "https://api.github.com";
+
+  // THEME + NAV (consistent with Projects)
+  const THEME_KEY = 'gh-theme';
+  const saved = localStorage.getItem(THEME_KEY);
+  const system = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', saved || system);
+
+  // Mobile menu toggle
+  const nav = document.querySelector('.site-nav');
+  const navBtn = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navBtn?.addEventListener('click', ()=>{
+    const open = nav.getAttribute('data-open') === 'true';
+    nav.setAttribute('data-open', String(!open));
+    navBtn.setAttribute('aria-expanded', String(!open));
+  });
+  navLinks?.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>nav.setAttribute('data-open','false')));
+
+  // Mark active + segmented pill position
+  function markActive(){
+    if(!navLinks) return;
+    const here = (location.pathname.split('/').pop() || 'index.html').split('#')[0];
+    const items = Array.from(navLinks.querySelectorAll('a'));
+    let target = null;
+    items.forEach(a=>{
+      const href = (a.getAttribute('href')||'').split('/').pop().split('#')[0];
+      const active = href === here || (here === '' && href === 'index.html');
+      a.classList.toggle('active', active);
+      if(active && !target) target = a;
+    });
+    if(here === 'index.html'){
+      const proj = navLinks.querySelector('a[data-route="projects"]');
+      if(proj){ proj.classList.add('active'); target = proj; }
+    }
+    if(target){
+      const pr = navLinks.getBoundingClientRect();
+      const r  = target.getBoundingClientRect();
+      navLinks.style.setProperty('--seg-x', (r.left - pr.left) + 'px');
+      navLinks.style.setProperty('--seg-w',  r.width + 'px');
+    }
+  }
+  window.addEventListener('load', markActive);
+  window.addEventListener('resize', markActive);
+
+  // Scroll shadow / glass after scroll
+  function onScroll(){ window.scrollY > 2 ? nav.classList.add('scrolled') : nav.classList.remove('scrolled'); }
+  onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+
+  // Theme toggle (single handler)
+  const themeBtnTop = document.getElementById('themeBtnTop');
+  themeBtnTop?.addEventListener('click', ()=>{
+    const html = document.documentElement;
+    const next = (html.getAttribute('data-theme') === 'light') ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem(THEME_KEY, next);
+  });
+
+  // --- Fetch basic profile for avatar/name ---
+  fetch(`${API_BASE}/users/${username}`)
+    .then(r=>r.ok?r.json():Promise.reject())
+    .then(u=>{
+      const avatar = document.getElementById('avatar');
+      const profileLink = document.getElementById('profileLink');
+      if(avatar){ avatar.src = u.avatar_url; avatar.alt = `${u.login} avatar`; }
+      if(profileLink){ profileLink.href = u.html_url; profileLink.textContent = u.name ? `${u.name} (@${u.login})` : `@${u.login}`; }
+    }).catch(()=>{});
+
+  // --- LinkedIn Articles ---
+  // You can list normal article URLs OR LinkedIn embed URLs. If it's an embed URL, we'll render the iframe.
+  const linkedInItems = [
+    {
+      url: "https://www.linkedin.com/pulse/from-classroom-career-my-journey-amazon-leighché-jaikarran--b2pif/",
+      title: "From Classroom to Career: My Journey into Amazon",
+      desc: "From a high school without IT to an internationally published research paper and into Sales Ops at Amazon—my path and lessons.",
+      image: "https://media.licdn.com/dms/image/v2/D4D12AQEWhUxnyFeJOQ/article-cover_image-shrink_720_1280/B4DZkf12YtJMA0-/0/1757175836117?e=1759968000&v=beta&t=mgr8Jj-HTDwbwWNCyXzqAY99lVIKIQYHfbfS2QO6h1o"
+    },
+    {
+      url: "https://www.linkedin.com/pulse/storytelling-secret-ingredient-successful-website-leighché-jaikarran-/",
+      title: "Storytelling: The Secret Ingredient of a Successful Website",
+      desc: "Why strong narrative elevates UX, trust, and conversions — and how to apply it across your site.",
+      image: "https://media.licdn.com/dms/image/v2/D4D12AQFLZUPOqpsIXA/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1697246207314?e=1760572800&v=beta&t=WnJr6YPeWwHgD74ziiwGJscVUZQ94yiDpfY7Yl0Spkk"
+    },
+    {
+      url: "https://dl.acm.org/doi/abs/10.1145/3715335.3735489",
+      title: "Off the Grid: Exploring the design and user agency requirements of AI & IoT solutions aimed at remote, resource‑constrained areas in Africa",
+      desc: "Peer‑reviewed paper presented at ACM COMPASS 2025 (University of Toronto).",
+      image: "https://s.alicdn.com/@sc04/kf/H09629905963649aeab56f0269093ed9cx/201567222/H09629905963649aeab56f0269093ed9cx.jpg"
+    }
+  ];
+
+  function renderLinkedIn(){
+    const el = document.getElementById("li-grid");
+    if(!el) return;
+    el.innerHTML = linkedInItems.map(({url,title,desc,image}) => {
+      let link = url || '';
+      // If it's a LinkedIn EMBED url, convert to a normal feed URL so we open the post page, not the embed.
+      const m = link.match(/^https:\/\/www\.linkedin\.com\/embed\/feed\/update\/(urn:li:[^?]+)(?:\?.*)?$/);
+      if(m){ link = `https://www.linkedin.com/feed/update/${m[1]}/`; }
+      const safeUrl = link.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+      const hero = image ? `style=\"background-image:url('${image.replace(/"/g,'&quot;')}'); background-size:cover; background-position:center;\"` : '';
+      return `
+        <article class=\"li-card\">
+          <div class=\"li-hero\" ${hero}></div>
+          <h3>${title||'Article'}</h3>
+          ${desc?`<p class=\"desc\">${desc}</p>`:''}
+          <a class=\"li-btn\" href=\"${safeUrl}\" target=\"_blank\" rel=\"noopener\">Read</a>
+        </article>`;
+    }).join("");
+  }
+
+  renderLinkedIn();
+})();
+</script>
+<script>
+// Floating Dock Nav interactions (active pill + theme reuse)
+(function(){
+  const dock = document.getElementById('dock');
+  if(!dock) return;
+  const indicator = dock.querySelector('.indicator');
+  const items = Array.from(dock.querySelectorAll('a.dock-item'));
+
+  function moveIndicator(el){
+    const left = el.offsetLeft - dock.scrollLeft; // account for horizontal scroll
+    indicator.style.setProperty('--x', left + 'px');
+    indicator.style.setProperty('--w', el.offsetWidth + 'px');
+    items.forEach(a=>a.classList.toggle('active', a===el));
+  }
+  function pickActive(){
+    const here = (location.pathname.split('/').pop() || 'index.html').split('#')[0];
+    let match = items.find(a=>{
+      const href = (a.getAttribute('href')||'').split('/').pop().split('#')[0];
+      return href === here;
+    }) || items[0];
+    moveIndicator(match);
+  }
+  window.addEventListener('resize', pickActive);
+  dock.addEventListener('scroll', pickActive, {passive:true});
+  items.forEach(a=>a.addEventListener('click', ()=>moveIndicator(a)));
+  pickActive();
+
+  // Top theme button hooks into same storage/attribute as the existing one
+  const themeBtnTop = document.getElementById('themeBtnTop');
+  function toggleTheme(){
+    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('gh-theme', next);
+  }
+  themeBtnTop?.addEventListener('click', toggleTheme);
+})();
+</script>
+</body>
+</html>
